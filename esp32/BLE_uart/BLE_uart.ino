@@ -69,12 +69,16 @@ class MyCallbacks: public BLECharacteristicCallbacks {
           pTxCharacteristic->notify();
         }else if(resStr == "light1on"){
           digitalWrite(14, 1);
+          Serial.println("light1on");
         }else if(resStr == "light1off"){
           digitalWrite(14, 0);
+          Serial.println("light1off");
         }else if(resStr == "light2on"){
           digitalWrite(12, 1);
+          Serial.println("light2on");
         }else if(resStr == "light2off"){
           digitalWrite(12, 0);
+          Serial.println("light2off");
         }
         resStr = "";
       }
@@ -155,6 +159,7 @@ void loop() {
   // connecting
   if (deviceConnected && !oldDeviceConnected) {
     // do stuff here on connecting
+    Serial.println("Connected");
     oldDeviceConnected = deviceConnected;
   }
 }

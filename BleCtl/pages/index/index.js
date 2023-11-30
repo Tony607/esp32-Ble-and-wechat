@@ -18,7 +18,7 @@ Page({
       res.devices.forEach((device) => {
         // 这里可以做一些过滤
         console.log('Device Found', device)
-        if(device.deviceId == "2E209DD5-18CD-C223-8403-A2A0C1AD89CA"){
+        if(device.deviceId == "2A7AF759-C204-5128-0B89-A81CCBCA2381"){
           // 找到设备开始连接
           this.bleConnection(device.deviceId);
           wx.stopBluetoothDevicesDiscovery()
@@ -156,41 +156,31 @@ Page({
     )
     return hexArr.join('');
   },
+  controlLight(lightNumber, action){
+    let command = `light${lightNumber}${action}`; // 构建命令字符串，例如 "light1on"
+    var buffer = this.stringToBytes(command); // 将命令转换为字节
+    wx.writeBLECharacteristicValue({
+      deviceId: this.data.deviceId,
+      serviceId: this.data.serviceId,
+      characteristicId: this.data.characteristicId,
+      value: buffer,
+    });
+  },
+  
   light1on(){
-    var buffer = this.stringToBytes("light1on")
-    wx.writeBLECharacteristicValue({
-      deviceId:this.data.deviceId,
-      serviceId:this.data.serviceId,
-      characteristicId:this.data.characteristicId,
-      value: buffer,
-    })
+    this.controlLight(1, 'on');
   },
+  
   light2on(){
-    var buffer = this.stringToBytes("light2on")
-    wx.writeBLECharacteristicValue({
-      deviceId:this.data.deviceId,
-      serviceId:this.data.serviceId,
-      characteristicId:this.data.characteristicId,
-      value: buffer,
-    })
+    this.controlLight(2, 'on');
   },
+  
   light1off(){
-    var buffer = this.stringToBytes("light1off")
-    wx.writeBLECharacteristicValue({
-      deviceId:this.data.deviceId,
-      serviceId:this.data.serviceId,
-      characteristicId:this.data.characteristicId,
-      value: buffer,
-    })
+    this.controlLight(1, 'off');
   },
+  
   light2off(){
-    var buffer = this.stringToBytes("light2off")
-    wx.writeBLECharacteristicValue({
-      deviceId:this.data.deviceId,
-      serviceId:this.data.serviceId,
-      characteristicId:this.data.characteristicId,
-      value: buffer,
-    })
+    this.controlLight(2, 'off');
   },
   
 })
