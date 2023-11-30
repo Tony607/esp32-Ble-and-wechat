@@ -7,4 +7,8 @@
   <button type="default" bindtap="light2on">2开</button>
   <view style="height: 10px;"></view>
   <button type="default" bindtap="light2off">2关</button>
+  <view style="height: 10px;"></view>
+  <button type="default" bindtap="getChipId">读取chipId</button>
+  <view style="height: 10px;"></view>
+  <view>芯片ID: {{chipId}}</view>
 </view>

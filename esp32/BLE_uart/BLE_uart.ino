@@ -23,6 +23,7 @@
 #include <BLEServer.h>
 #include <BLEUtils.h>
 #include <BLE2902.h>
+#include <ArduinoJson.h>
 
 BLEServer *pServer = NULL;
 BLECharacteristic * pTxCharacteristic;
@@ -39,6 +40,17 @@ uint8_t txValue = 0;
 #define CHARACTERISTIC_UUID_RX "6E400002-B5A3-F393-E0A9-E50E24DCCA9E"
 #define CHARACTERISTIC_UUID_TX "6E400003-B5A3-F393-E0A9-E50E24DCCA9E"
 
+
+void sendJsonResponse(const char* key, const char* value, int docSize = 1024) {
+    DynamicJsonDocument doc(docSize);
+    doc[key] = value;
+
+    String jsonResponse;
+    serializeJson(doc, jsonResponse);
+
+    pTxCharacteristic->setValue(jsonResponse.c_str());
+    pTxCharacteristic->notify();
+}
 
 class MyServerCallbacks: public BLEServerCallbacks {
     void onConnect(BLEServer* pServer) {
@@ -64,10 +76,7 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         }
         Serial.println();
         Serial.println("*********");
-        if(resStr == "getid"){
-          pTxCharacteristic->setValue(chipId.c_str());
-          pTxCharacteristic->notify();
-        }else if(resStr == "light1on"){
+        if(resStr == "light1on"){
           digitalWrite(14, 1);
           Serial.println("light1on");
         }else if(resStr == "light1off"){
@@ -79,12 +88,13 @@ class MyCallbacks: public BLECharacteristicCallbacks {
         }else if(resStr == "light2off"){
           digitalWrite(12, 0);
           Serial.println("light2off");
+        }else if(rxValue == "getChipId"){
+          sendJsonResponse("chipId", chipId.c_str());
         }
         resStr = "";
       }
     }
 };
-
 
 void setup() {
   Serial.begin(115200);
@@ -142,9 +152,7 @@ void loop() {
     if (deviceConnected) {
       delay(3);
       readString += Serial.read();
-      pTxCharacteristic->setValue(chipId.c_str());
-//      pTxCharacteristic->setValue((uint32_t)ESP.getEfuseMac());
-      pTxCharacteristic->notify();
+      sendJsonResponse("chipId", chipId.c_str());
       Serial.println(chipId);
 
     }

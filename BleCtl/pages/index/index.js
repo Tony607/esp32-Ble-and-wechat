@@ -6,10 +6,12 @@ Page({
   data: {
     'deviceId':'',
     'serviceId':'',
-    'characteristicId':''
+    'characteristicId':'',
+    chipId: '', // 存储芯片ID
   },
   onLoad() {
     this.bleInit();
+    this.getChipId(); // 添加这行来在页面加载时获取芯片ID
   },
   bleInit() {
     console.log('searchBle')
@@ -50,11 +52,30 @@ Page({
     })
     var that = this
     wx.onBLECharacteristicValueChange((result) => {
-      console.log('onBLECharacteristicValueChange',result.value)
-      let hex = that.ab2hex(result.value)
-      console.log('hextoString',that.hextoString(hex))
-      console.log('hex',hex)
+      let hex = this.ab2hex(result.value);
+      let jsonString = this.hextoString(hex);
+      try {
+        let dataObj = JSON.parse(jsonString);
+        console.log("dataObj:", dataObj);
+        if(dataObj.chipId) {
+          this.setData({
+            chipId: dataObj.chipId
+          });
+        }
+        // 对于更多键值对，您可以在这里添加更多的处理
+      } catch(e) {
+        console.error("Error parsing JSON:", jsonString);
+      }
     })
+  },
+  getChipId(){
+    var buffer = this.stringToBytes("getChipId");
+    wx.writeBLECharacteristicValue({
+      deviceId: this.data.deviceId,
+      serviceId: this.data.serviceId,
+      characteristicId: this.data.characteristicId,
+      value: buffer,
+    });
   },
   bleConnection(deviceId){
     wx.createBLEConnection({
