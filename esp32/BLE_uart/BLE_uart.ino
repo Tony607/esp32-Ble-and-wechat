@@ -98,7 +98,7 @@ void setup() {
 //  Serial.printf("Chip id: %s\n", chipid.c_str());
   Serial.println(chipId);
   // Create the BLE Device
-  BLEDevice::init("UART Service");
+  BLEDevice::init("UART Device");
 
   // Create the BLE Server
   pServer = BLEDevice::createServer();

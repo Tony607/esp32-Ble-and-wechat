@@ -18,7 +18,7 @@ Page({
       res.devices.forEach((device) => {
         // 这里可以做一些过滤
         console.log('Device Found', device)
-        if(device.deviceId == "2A7AF759-C204-5128-0B89-A81CCBCA2381"){
+        if(device.name == "UART Device"){
           // 找到设备开始连接
           this.bleConnection(device.deviceId);
           wx.stopBluetoothDevicesDiscovery()
